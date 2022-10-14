@@ -4,12 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.ccand99.apt_annotations.AutelConverter
 import com.ccand99.apt_annotations.BindView
 
 class MainActivity : AppCompatActivity() {
 
     @BindView(R.id.hello_world)
     var helloWorld: TextView? = null
+
+    @AutelConverter
+    var autelTest: String = "MISSION_WAYPOINT_ENTER_MSG"
 
     private lateinit var mUnbinder: Unbinder
 
