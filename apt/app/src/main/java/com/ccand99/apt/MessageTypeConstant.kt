@@ -13,6 +13,12 @@ object MessageTypeConstant {
     const val SET = "set"
 
     // 航点任务
+    @AutelConverter(
+        keyName = "KeyEnter",
+        canGet = true,
+        canSet = true,
+        paramConverter = AutelEmptyConvert
+    )
     const val MISSION_WAYPOINT_ENTER_MSG                  = "enterMission"     //进入航点任务功能，对应消息结构：无
     const val MISSION_WAYPOINT_EXIT_MSG                   = "exitMission"     //退出航点任务，对应消息结构：无
 //    @AutelConverter(canSet = true, canGet= true, canAction = true, canListen = true, paramConverter = "ParamConverter", resultConverter = "ResultConverter", paramBean = clazz, paramMsg = clazz, resultBean = clazz, resultMsg = clazz)

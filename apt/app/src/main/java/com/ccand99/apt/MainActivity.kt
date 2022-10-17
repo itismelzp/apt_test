@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
     @BindView(R.id.hello_world)
     var helloWorld: TextView? = null
 
-    @AutelConverter
+//    @AutelConverter
     var autelTest: String = "MISSION_WAYPOINT_ENTER_MSG"
 
     private lateinit var mUnbinder: Unbinder

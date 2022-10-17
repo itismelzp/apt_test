@@ -124,7 +124,7 @@ class AutelConverterProcessor : AbstractProcessor() {
 
             val componentProperty = PropertySpec.builder("component", componentClass)
 //                .initializer("ComponentType.MISSION")
-                .initializer(CodeBlock())
+                .initializer(initCode)
 //                .mutable() // var 不加val
                 //.addModifiers(KModifier.PRIVATE)
 
