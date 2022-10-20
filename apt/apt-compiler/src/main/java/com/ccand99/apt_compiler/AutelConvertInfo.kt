@@ -9,14 +9,15 @@ import javax.lang.model.element.Element
  */
 data class AutelConvertInfo(
     var element: Element? = null,
+    val keyName: String,
     var canSet: Boolean = false,
     var canGet: Boolean = false,
     var canAction: Boolean = false,
     var canListen: Boolean = false,
-    var paramConverter: String = "",
-    var resultConverter: String = "",
+    var paramConverter: String? = "",
+    var resultConverter: String? = "",
     var paramBean: String = "",
     var paramMsg: String = "",
-    var resultBea: String = "",
+    var resultBean: String = "",
     var resultMsg: String = ""
 )

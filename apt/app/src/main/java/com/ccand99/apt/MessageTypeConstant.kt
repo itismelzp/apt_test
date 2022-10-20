@@ -14,12 +14,23 @@ object MessageTypeConstant {
 
     // 航点任务
     @AutelConverter(
-        keyName = "KeyEnter",
+        keyName = "MessageTypeConstant.MISSION_WAYPOINT_ENTER_MSG",
         canGet = true,
         canSet = true,
-        paramConverter = AutelEmptyConvert
+        paramConverter = "AutelEmptyConvert",
+        resultBean = "MissionWaypointStatusReportNtfyBean",
+        resultConverter = "AutelEmptyConvert"
     )
     const val MISSION_WAYPOINT_ENTER_MSG                  = "enterMission"     //进入航点任务功能，对应消息结构：无
+
+    @AutelConverter(
+        keyName = "MessageTypeConstant.MISSION_WAYPOINT_EXIT_MSG",
+        canGet = true,
+        canAction = true,
+        paramConverter = "AutelEmptyConvert",
+        resultBean = "MissionWaypointStatusReportNtfyBean",
+        resultConverter = "AutelEmptyConvert"
+    )
     const val MISSION_WAYPOINT_EXIT_MSG                   = "exitMission"     //退出航点任务，对应消息结构：无
 //    @AutelConverter(canSet = true, canGet= true, canAction = true, canListen = true, paramConverter = "ParamConverter", resultConverter = "ResultConverter", paramBean = clazz, paramMsg = clazz, resultBean = clazz, resultMsg = clazz)
     const val MISSION_WAYPOINT_START_MSG                  = "startMission"     //开始航点任务，对应消息结构：MissionWaypointGUID
