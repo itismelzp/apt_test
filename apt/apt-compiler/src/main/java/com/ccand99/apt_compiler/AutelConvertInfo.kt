@@ -1,6 +1,7 @@
 package com.ccand99.apt_compiler
 
 import javax.lang.model.element.Element
+import kotlin.reflect.KClass
 
 /**
  * Created by lizhiping on 2022/10/14.
@@ -8,7 +9,7 @@ import javax.lang.model.element.Element
  * description
  */
 data class AutelConvertInfo(
-    var element: Element? = null,
+    var element: Element,
     val keyName: String,
     var canSet: Boolean = false,
     var canGet: Boolean = false,
@@ -16,8 +17,8 @@ data class AutelConvertInfo(
     var canListen: Boolean = false,
     var paramConverter: String? = "",
     var resultConverter: String? = "",
-    var paramBean: String = "",
+    var paramBean: KClass<out Any>? = null,
     var paramMsg: String = "",
-    var resultBean: String = "",
+    var resultBean: KClass<out Any>? = null,
     var resultMsg: String = ""
 )

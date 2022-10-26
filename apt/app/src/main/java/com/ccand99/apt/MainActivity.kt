@@ -9,7 +9,7 @@ import com.ccand99.apt_annotations.BindView
 
 class MainActivity : AppCompatActivity() {
 
-    @BindView(R.id.hello_world)
+//    @BindView(R.id.hello_world)
     var helloWorld: TextView? = null
 
 //    @AutelConverter

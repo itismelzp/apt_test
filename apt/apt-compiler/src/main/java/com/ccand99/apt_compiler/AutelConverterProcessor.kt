@@ -8,6 +8,7 @@ import java.io.IOException
 import javax.annotation.processing.*
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 
@@ -62,18 +63,22 @@ class AutelConverterProcessor : AbstractProcessor() {
             //按照类整理属性
             val enclosingElement = element.enclosingElement
 //            var autelConverterElements = elementMap[enclosingElement]
+            println("element.enclosingElement ------------> ${element.enclosingElement}")
             var autelConvertElementInfos = elementInfoMap[enclosingElement]
 //            if (autelConverterElements == null) {
 //                autelConverterElements = ArrayList()
 //                elementMap[enclosingElement] = autelConverterElements
 //            }
+            println("autelConvertElementInfos ------------> $autelConvertElementInfos")
             if (autelConvertElementInfos == null) {
                 autelConvertElementInfos = ArrayList()
                 elementInfoMap[enclosingElement] = autelConvertElementInfos
             }
-
 //            autelConverterElements.add(element)
+            println("elementInfo ------------> begin")
             val elementInfo = createElementInfo(element)
+
+            println("elementInfo ------------> $elementInfo")
             autelConvertElementInfos.add(elementInfo)
         }
 
@@ -106,9 +111,9 @@ class AutelConverterProcessor : AbstractProcessor() {
 
             clazzBuilder.addProperty(componentProperty)
 
-            autelConverterElements.forEach {
+            autelConverterElements.forEach { info ->
 
-                println("forEach it: $it")
+                println("forEach it: $info")
 
                 // autelKey属性
                 val autelKeyInfoClass = ClassName(
@@ -124,13 +129,16 @@ class AutelConverterProcessor : AbstractProcessor() {
                     "java.lang", "Void"
                 )
                 println("voidParameterized------------> $voidParameterized")
-                val parameterized = ClassName(
-                    "com.ccand99.apt",
-                    it.resultBean
-                )
 
+                val classFromAnnotation = getClassFromAnnotation(info.element)
+//                val parameterized = ClassName("com.ccand99.apt", it.resultBean)
+                val parameterized = ClassName("com.ccand99.apt", classFromAnnotation?.let {
+                    classFromAnnotation.substring(classFromAnnotation.lastIndexOf("."), classFromAnnotation.length)
+                }?:"Void")
                 println("parameterized------------> $parameterized")
+
                 val parameterizedAutelKeyInfoClass = autelKeyInfoClass.parameterizedBy(voidParameterized, parameterized)
+                println("parameterizedAutelKeyInfoClass------------> $parameterizedAutelKeyInfoClass")
                 // 类属性
                 val initStr = """AutelActionKeyInfo(
                     |component.value,
@@ -142,18 +150,21 @@ class AutelConverterProcessor : AbstractProcessor() {
 
                 val initCode = "AutelActionKeyInfo(\n" +
                         "    component.value,\n" +
-                        "    "+it.keyName+",\n" +
+//                        "    "+it.keyName+",\n" +
+                        "    MessageTypeConstant.MISSION_WAYPOINT_ENTER_MSG,\n" +
                         "    AutelEmptyConvert(),\n" +
                         "    AutelEmptyConvert()\n" +
                         ")" +
-                        if (it.canGet) ".canGet(true)" else "" +
-                        if (it.canSet) ".canSet(true)" else "" +
-                        if (it.canAction) ".canPerformAction(true)" else ""
+                        (if (info.canGet) ".canGet(true)" else "") +
+                        (if (info.canSet) ".canSet(true)" else "") +
+                        (if (info.canAction) ".canPerformAction(true)" else "")
 
                 println("initCode------------> $initCode")
                 // 类属性
-                val keyProperty = PropertySpec.builder(it.keyName, parameterizedAutelKeyInfoClass)
+                val keyProperty = PropertySpec.builder(info.keyName, parameterizedAutelKeyInfoClass)
                     .initializer(initCode)
+
+                println("keyProperty------------> $keyProperty")
                 clazzBuilder.addProperty(keyProperty.build())
             }
 
@@ -177,19 +188,45 @@ class AutelConverterProcessor : AbstractProcessor() {
         return false
     }
 
+    private fun getClassFromAnnotation(key: Element): String? {
+
+        println("getClassFromAnnotation------------> key: $key")
+        val annotationMirrors = key.annotationMirrors
+        for (annotationMirror in annotationMirrors) {
+            println("getClassFromAnnotation------------> annotationMirror: $key")
+            println("getClassFromAnnotation------------> annotationType: ${annotationMirror.annotationType}")
+            if (AutelConverter::class.java.name == annotationMirror.annotationType.toString()) {
+                val keySet: Set<ExecutableElement> = annotationMirror.elementValues.keys
+                for (executableElement in keySet) {
+                    if (executableElement.simpleName.toString() == "paramBean") {
+                        return annotationMirror.elementValues[executableElement]!!.value.toString()
+                    }
+                }
+            }
+        }
+        return null
+    }
+
     private fun createElementInfo(element: Element): AutelConvertInfo {
         val annotation = element.getAnnotation(AutelConverter::class.java)
-        val convertInfo = AutelConvertInfo(keyName = annotation.keyName)
+        println("createElementInfo ------------> 0")
+        println("createElementInfo ------------> $element")
+        println("createElementInfo ------------> $annotation")
+
+        val convertInfo = AutelConvertInfo(keyName = annotation.keyName, element = element)
+        println("createElementInfo ------------> 1")
         convertInfo.element = element
         convertInfo.canSet = annotation.canSet
         convertInfo.canGet= annotation.canGet
         convertInfo.canAction= annotation.canAction
-        convertInfo.canListen= annotation.canListen
+        println("createElementInfo ------------> 2")
+        convertInfo.canListen = annotation.canListen
+//        convertInfo.paramBean = annotation.paramBean
         convertInfo.paramConverter= annotation.paramConverter
         convertInfo.resultConverter= annotation.resultConverter
-        convertInfo.paramBean= annotation.paramBean
+        println("createElementInfo ------------> 3")
+
         convertInfo.paramMsg= annotation.paramMsg
-        convertInfo.resultBean= annotation.resultBean
         convertInfo.resultMsg= annotation.resultMsg
         return convertInfo
     }

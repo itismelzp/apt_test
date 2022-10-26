@@ -1,6 +1,7 @@
 package com.ccand99.apt
 
 import com.ccand99.apt_annotations.AutelConverter
+import kotlin.reflect.KClass
 
 /**
  * @date 2022/9/23.
@@ -14,21 +15,23 @@ object MessageTypeConstant {
 
     // 航点任务
     @AutelConverter(
-        keyName = "MessageTypeConstant.MISSION_WAYPOINT_ENTER_MSG",
+        keyName = "keyEnter",
         canGet = true,
         canSet = true,
+        paramBean = Void::class,
         paramConverter = "AutelEmptyConvert",
-        resultBean = "MissionWaypointStatusReportNtfyBean",
+        resultBean = MissionWaypointStatusReportNtfyBean::class,
         resultConverter = "AutelEmptyConvert"
     )
     const val MISSION_WAYPOINT_ENTER_MSG                  = "enterMission"     //进入航点任务功能，对应消息结构：无
 
     @AutelConverter(
-        keyName = "MessageTypeConstant.MISSION_WAYPOINT_EXIT_MSG",
+        keyName = "keyExit",
         canGet = true,
         canAction = true,
+        paramBean = MissionWaypointStatusReportNtfyBean::class,
         paramConverter = "AutelEmptyConvert",
-        resultBean = "MissionWaypointStatusReportNtfyBean",
+        resultBean = MissionWaypointStatusReportNtfyBean::class,
         resultConverter = "AutelEmptyConvert"
     )
     const val MISSION_WAYPOINT_EXIT_MSG                   = "exitMission"     //退出航点任务，对应消息结构：无
